@@ -1,4 +1,6 @@
 <h1>Idea Box 2.0</h1>
-<%= text_field_tag :title, "Dat Title" %><br>
-<%= text_area_tag :body, "Dat Body" %><br>
+<%= text_field_tag :title, nil, placeholder: "Dat Title" %><br>
+<%= text_area_tag :body, nil, placeholder: "Dat Body" %><br>
 <button id="create-idea">Create Idea</button>
+
+<div class="all-ideas"></div>
