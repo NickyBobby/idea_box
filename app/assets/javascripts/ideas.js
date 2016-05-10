@@ -1,13 +1,29 @@
 $(document).ready(function() {
   getAllIdeas();
 
-  $("#create-idea").click(function() {
+  $('#create-idea').click(function() {
     createIdea();
   });
+
+  $('.all-ideas').delegate('.delete-idea', 'click', function() {
+    var ideaId = $(this).parent().attr('id');
+    deleteIdea(ideaId);
+  });
+
+  $('.all-ideas').delegate('.edit-idea', 'click', function() {
+    var ideaId = $(this).parent().attr('id');
+    var title  = $(this).closest('h2').val();
+    var body   = $(this).closest('h3').val();
+
+    editTextsField(this, title, body);
+  });
+
 });
 
 function createIdea() {
-  var ideaParams = { idea: { title: $('#title').val(), body: $('#body').val() } };
+  var title = $('#title').val();
+  var body = $('#body').val();
+  var ideaParams = { idea: { title: title, body: body } };
   $.ajax({
     type: 'POST',
     url:  '/api/v1/ideas',
@@ -18,7 +34,6 @@ function createIdea() {
     },
     dataType: 'JSON'
   });
-  console.log("something?");
 }
 
 function getAllIdeas() {
@@ -42,9 +57,10 @@ function addIdea(idea) {
 }
 
 function ideaInfo(idea) {
-  return "<div class='idea' id='idea-" + idea.id + "'>" +
+  return "<div class='idea' id='" + idea.id + "'>" +
          "<h2>" + idea.title + "</h2>" +
          "<h3>" + idea.body + "</h3>" +
+         "<button class='delete-idea'>Delete Idea</button>";
          "</div>";
 }
 
@@ -55,4 +71,14 @@ function prependIdea(idea) {
 function clearTextFields() {
   $('#title').val('');
   $('#body').val('');
+}
+
+function deleteIdea(ideaId) {
+  $.ajax({
+    type: 'DELETE',
+    url: '/api/v1/ideas/' + ideaId,
+    success: function() {
+      $('#' + ideaId).remove();
+    }
+  });
 }
