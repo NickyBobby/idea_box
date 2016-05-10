@@ -6,8 +6,11 @@ class Api::V1::IdeasController < Api::V1::BaseController
   end
 
   def create
-    # binding.pry
     respond_with :api, :v1, Idea.create(idea_params), location: nil
+  end
+
+  def destroy
+    respond_with :api, :v1, Idea.find(params[:id]).destroy
   end
 
   private
