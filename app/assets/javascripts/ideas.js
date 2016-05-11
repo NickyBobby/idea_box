@@ -11,11 +11,16 @@ $(document).ready(function() {
   });
 
   $('.all-ideas').delegate('.edit-idea', 'click', function() {
-    var ideaId = $(this).parent().attr('id');
-    var title  = $(this).closest('h2').val();
-    var body   = $(this).closest('h3').val();
+    var parentDiv = $(this).parent();
+    editTextsFields(parentDiv);
+  });
 
-    editTextsField(this, title, body);
+  $('.all-ideas').delegate('.update-idea', 'click', function() {
+    var ideaId = $(this).parent().attr('id');
+    var newTitle = $(this).parent().children('#title').val();
+    var newBody  = $(this).parent().children('#body').val();
+    updateIdea(ideaId, newTitle, newBody);
+    clearForm(this);
   });
 
 });
@@ -60,6 +65,7 @@ function ideaInfo(idea) {
   return "<div class='idea' id='" + idea.id + "'>" +
          "<h2>" + idea.title + "</h2>" +
          "<h3>" + idea.body + "</h3>" +
+         "<button class='edit-idea'>Edit Idea</button>" +
          "<button class='delete-idea'>Delete Idea</button>";
          "</div>";
 }
@@ -79,6 +85,43 @@ function deleteIdea(ideaId) {
     url: '/api/v1/ideas/' + ideaId,
     success: function() {
       $('#' + ideaId).remove();
+    }
+  });
+}
+
+function editTextsFields(parent) {
+  var ideaId = parent.attr('id');
+  var title  = parent.children('h2').text();
+  var body   = parent.children('h3').text();
+
+  clearIdeaInfo(parent);
+
+  var inputTitle = "<input type='text' name='title' id='title' placeholder='" + title + "'><br>";
+  var inputBody  = "<input type='text' name='body' id='body' placeholder='" + body + "'><br>";
+  parent.prepend(inputBody);
+  parent.prepend(inputTitle);
+  parent.append("<button class='update-idea'>Update Idea</button>");
+}
+
+function clearIdeaInfo(parent) {
+  parent.children('h2').remove();
+  parent.children('h3').remove();
+  parent.children('.edit-idea').remove();
+}
+
+function clearForm(here) {
+  $(here).parent().remove();
+}
+
+function updateIdea(id, title, body) {
+  var updateParams = { idea: { id: id, title: title, body: body } };
+  $.ajax({
+    type: 'PUT',
+    url: '/api/v1/ideas/' + id,
+    data: updateParams,
+    success: function() {
+      var idea = { id: id, title: title, body: body };
+      prependIdea(idea);
     }
   });
 }
