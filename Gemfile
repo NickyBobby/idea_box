@@ -25,6 +25,7 @@ gem 'active_model_serializers', github: 'rails-api/active_model_serializers'
 
 group :development, :test do
   gem 'pry'
+  gem 'sqlite3'
   gem 'rspec-rails', '~> 3.0'
   gem 'capybara'
   gem 'database_cleaner'
