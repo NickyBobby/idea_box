@@ -10,18 +10,15 @@ $(document).ready(function() {
     deleteIdea(ideaId);
   });
 
-  $('.all-ideas').delegate('.edit-idea', 'click', function() {
-    var parentDiv = $(this).parent();
-    editTextsFields(parentDiv);
-  });
-
-  $('.all-ideas').delegate('.update-idea', 'click', function() {
+  $('.all-ideas').delegate('.content', 'click', function() {
     var ideaId = $(this).parent().attr('id');
-    var newTitle = $(this).parent().children('#title').val();
-    var newBody  = $(this).parent().children('#body').val();
-    var newQuality  = $(this).parent().children('#quality').text();
-    updateIdea(ideaId, newTitle, newBody, newQuality);
-    clearForm(this);
+    $(this).focusout(function() {
+      var updateParams = { idea: {} };
+      var newText = $(this).text();
+      var type = $(this).attr('id');
+      updateParams.idea[type] = newText;
+      updateAttribute(ideaId, updateParams);
+    });
   });
 
   $('.all-ideas').delegate('#thumbs-up', 'click', function() {
@@ -76,25 +73,19 @@ function addIdea(idea) {
 
 function ideaInfo(idea) {
   return "<div class='idea' id='" + idea.id + "'>" +
-         "<h2 contentEditable=true>" + idea.title + "</h2>" +
-         "<h3 contentEditable=true>" + idea.body  + "</h3>" +
+         "<h2 id='title' class='content' contentEditable=true>" + idea.title + "</h2>" +
+         "<h3 id='body' class='content' contentEditable=true>" + idea.body  + "</h3>" +
          "<p id='quality' class='bold italic'>" + idea.quality + "</p>" +
          "<button type='button' id='thumbs-up' class='btn btn-default' aria-label='Right Align'>" +
          "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true'></span></button>" +
          "<button type='button' id='thumbs-down' class='btn btn-default' aria-label='Right Align'>" +
          "<span class='glyphicon glyphicon-thumbs-down' aria-hidden='true'></span></button><br>" +
-         "<button class='edit-idea btn btn-primary'>Edit Idea</button>" +
-         "<button class='delete-idea btn btn-danger'>Delete Idea</button>";
+         "<button class='delete-idea btn btn-danger'>Delete Idea</button>" +
          "</div>";
 }
 
 function prependIdea(idea) {
   $('.all-ideas').prepend(ideaInfo(idea));
-}
-
-function clearTextFields() {
-  $('#title').val('');
-  $('#body').val('');
 }
 
 function deleteIdea(ideaId) {
@@ -107,39 +98,13 @@ function deleteIdea(ideaId) {
   });
 }
 
-function editTextsFields(parent) {
-  var ideaId = parent.attr('id');
-  var title  = parent.children('h2').text();
-  var body   = parent.children('h3').text();
-
-  clearIdeaInfo(parent);
-
-  var inputTitle = "<input type='text' name='title' id='title' placeholder='" + title + "'><br>";
-  var inputBody  = "<input type='text' name='body' id='body' placeholder='" + body + "'><br>";
-  parent.prepend(inputBody);
-  parent.prepend(inputTitle);
-  parent.append("<button class='update-idea btn btn-success'>Update Idea</button>");
-}
-
-function clearIdeaInfo(parent) {
-  parent.children('h2').remove();
-  parent.children('h3').remove();
-  parent.children('.edit-idea').remove();
-}
-
-function clearForm(here) {
-  $(here).parent().remove();
-}
-
-function updateIdea(id, title, body, quality) {
-  var updateParams = { idea: { id: id, title: title, body: body, quality: quality } };
+function updateAttribute(id, params) {
   $.ajax({
     type: 'PUT',
-    url: '/api/v1/ideas/' + id,
-    data: updateParams,
+    url:  '/api/v1/ideas/' + id,
+    data: params,
     success: function() {
-      var idea = { id: id, title: title, body: body, quality: quality };
-      prependIdea(idea);
+
     }
   });
 }
