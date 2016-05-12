@@ -4,7 +4,10 @@
   <%= text_area_tag :body, nil, placeholder: "Dat Body" %><br>
   <button id="create-idea" class="btn btn-success">Create Idea</button>
 
-  <div class="new-idea"></div>
+  <div class="">
+    <%= text_field_tag :search, nil, class: "search" %>
+    <button id="clear-search" class="btn btn-primary">Clear Search</button>
+  </div>
 
   <div class="all-ideas"></div>
 </div>

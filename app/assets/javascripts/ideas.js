@@ -12,6 +12,18 @@ $(document).ready(function() {
 
   $('.all-ideas').delegate('.content', 'click', function() {
     var ideaId = $(this).parent().attr('id');
+
+    $(this).keypress(function(e) {
+      var updateParams = { idea: {} };
+      var newText = $(this).text();
+      var type = $(this).attr('id');
+      updateParams.idea[type] = newText;
+      if (e.which === 13) {
+        e.preventDefault();
+        updateAttribute(ideaId, updateParams);
+      }
+    });
+
     $(this).focusout(function() {
       var updateParams = { idea: {} };
       var newText = $(this).text();
@@ -79,7 +91,7 @@ function ideaInfo(idea) {
          "<button type='button' id='thumbs-up' class='btn btn-default' aria-label='Right Align'>" +
          "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true'></span></button>" +
          "<button type='button' id='thumbs-down' class='btn btn-default' aria-label='Right Align'>" +
-         "<span class='glyphicon glyphicon-thumbs-down' aria-hidden='true'></span></button><br>" +
+         "<span class='glyphicon glyphicon-thumbs-down' aria-hidden='true'></span></button><br><br>" +
          "<button class='delete-idea btn btn-danger'>Delete Idea</button>" +
          "</div>";
 }
@@ -104,7 +116,17 @@ function updateAttribute(id, params) {
     url:  '/api/v1/ideas/' + id,
     data: params,
     success: function() {
+      fetchSingleIdea(id);
+    }
+  });
+}
 
+function fetchSingleIdea(id) {
+  $.ajax({
+    type: 'GET',
+    url:  '/api/v1/ideas/' + id,
+    success: function(idea) {
+      $('#' + id).replaceWith(prependIdea(idea));
     }
   });
 }
