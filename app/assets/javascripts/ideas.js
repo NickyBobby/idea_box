@@ -14,10 +14,7 @@ $(document).ready(function() {
     var ideaId = $(this).parent().attr('id');
 
     $(this).keypress(function(e) {
-      var updateParams = { idea: {} };
-      var newText = $(this).text();
-      var type = $(this).attr('id');
-      updateParams.idea[type] = newText;
+      var updateParams = getUpdate(this);
       if (e.which === 13) {
         e.preventDefault();
         updateAttribute(ideaId, updateParams);
@@ -25,10 +22,7 @@ $(document).ready(function() {
     });
 
     $(this).focusout(function() {
-      var updateParams = { idea: {} };
-      var newText = $(this).text();
-      var type = $(this).attr('id');
-      updateParams.idea[type] = newText;
+      var updateParams = getUpdate(this);
       updateAttribute(ideaId, updateParams);
     });
   });
@@ -36,13 +30,13 @@ $(document).ready(function() {
   $('.all-ideas').delegate('#thumbs-up', 'click', function() {
     var quality = $(this).parent().children('p').text();
     var id  = $(this).parent().attr('id');
-    thumbsUp(id, quality, this);
+    thumbsUpOrThumbsDown(id, quality, this, 'up');
   });
 
   $('.all-ideas').delegate('#thumbs-down', 'click', function() {
     var quality = $(this).parent().children('p').text();
     var id  = $(this).parent().attr('id');
-    thumbsDown(id, quality, this);
+    thumbsUpOrThumbsDown(id, quality, this, 'down');
   });
 
 });
@@ -131,20 +125,17 @@ function fetchSingleIdea(id) {
   });
 }
 
-function thumbsUp(id, quality, here) {
-  var newQuality = { idea: { quality: qualities.up[quality] } };
-  $.ajax({
-    type: 'PUT',
-    url:  '/api/v1/ideas/' + id,
-    data: newQuality,
-    success: function() {
-      updateQuality(newQuality, here);
-    }
-  });
+function getUpdate(that) {
+  var updateParams = { idea: {} };
+  var newText = $(that).text();
+  var type = $(that).attr('id');
+  updateParams.idea[type] = newText;
+  return updateParams;
 }
 
-function thumbsDown(id, quality, here) {
-  var newQuality = { idea: { quality: qualities.down[quality] } };
+
+function thumbsUpOrThumbsDown(id, quality, here, direction) {
+  var newQuality = { idea: { quality: qualities[direction][quality] } };
   $.ajax({
     type: 'PUT',
     url:  '/api/v1/ideas/' + id,
