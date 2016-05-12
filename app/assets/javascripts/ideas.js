@@ -57,6 +57,11 @@ function createIdea() {
   });
 }
 
+function clearTextFields() {
+   $('#title').val('');
+   $('#body').val('');
+ }
+
 function getAllIdeas() {
   $.ajax({
     type: 'GET',
