@@ -1,16 +1,17 @@
 $(document).ready(function() {
   getAllIdeas();
+  var $allIdeas = $('.all-ideas');
 
   $('#create-idea').click(function() {
     createIdea();
   });
 
-  $('.all-ideas').delegate('.delete-idea', 'click', function() {
+  $allIdeas.delegate('.delete-idea', 'click', function() {
     var ideaId = $(this).parent().attr('id');
     deleteIdea(ideaId);
   });
 
-  $('.all-ideas').delegate('.content', 'click', function() {
+  $allIdeas.delegate('.content', 'click', function() {
     var ideaId = $(this).parent().attr('id');
 
     $(this).keypress(function(e) {
@@ -27,13 +28,13 @@ $(document).ready(function() {
     });
   });
 
-  $('.all-ideas').delegate('#thumbs-up', 'click', function() {
+  $allIdeas.delegate('#thumbs-up', 'click', function() {
     var quality = $(this).parent().children('p').text();
     var id  = $(this).parent().attr('id');
     thumbsUpOrThumbsDown(id, quality, this, 'up');
   });
 
-  $('.all-ideas').delegate('#thumbs-down', 'click', function() {
+  $allIdeas.delegate('#thumbs-down', 'click', function() {
     var quality = $(this).parent().children('p').text();
     var id  = $(this).parent().attr('id');
     thumbsUpOrThumbsDown(id, quality, this, 'down');

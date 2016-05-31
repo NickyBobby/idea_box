@@ -1,6 +1,9 @@
+var $title = $('#title');
+var $body = $('#body');
+
 function createIdea() {
-  var title = $('#title').val();
-  var body = $('#body').val();
+  var title = $title.val();
+  var body = $body.val();
   var ideaParams = { idea: { title: title, body: body } };
   $.ajax({
     type: 'POST',
@@ -15,10 +18,10 @@ function createIdea() {
 }
 
 function clearTextFields() {
-   $('#title').val('');
-   $('#body').val('');
+   $title.val('');
+   $body.val('');
  }
- 
+
  function prependIdea(idea) {
    $('.all-ideas').prepend(ideaInfo(idea));
  }
